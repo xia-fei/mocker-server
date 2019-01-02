@@ -101,8 +101,6 @@ public class MockData {
             Collection collection = (Collection) createCollectionInstance(collectionClass);
             for (int i = 0; i < mockSettings.getListLimit(); i++) {
                 collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], field, objectPath));
-                collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], field, objectPath));
-                collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], field, objectPath));
             }
             return collection;
         }
