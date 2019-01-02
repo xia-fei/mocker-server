@@ -18,7 +18,7 @@ public class MockerHttpApplicationTests {
 
     @Autowired
     private MavenRepositoryService mavenRepositoryService;
-    PomLocation pomLocation = new PomLocation("com.qccr.shprod", "shprod-facade", "3.9.9.9-SNAPSHOT");
+    private PomLocation pomLocation = new PomLocation("com.qccr.shprod", "shprod-facade", "3.9.9.9-SNAPSHOT");
 
     @Test
     public void contextLoads() {
@@ -41,7 +41,7 @@ public class MockerHttpApplicationTests {
         }
     }
 
-    
+
 
 
 
