@@ -24,8 +24,8 @@
             <version>4.3.21.RELEASE</version>
         </dependency>
         <dependency>
-            <artifactId>annotation</artifactId>
             <groupId>org.wing.mocker</groupId>
+            <artifactId>annotation</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
@@ -34,6 +34,20 @@
             <version>1.7.25</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://192.168.0.107:8081/nexus/content/repositories/releases/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Nexus Snapshots Repository</name>
+            <url>http://192.168.0.107:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 
 </project>
