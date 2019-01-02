@@ -1,17 +1,16 @@
-package org.wing.mocker.http;
+package org.wing.mocker.http.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.wing.mocker.core.MockData;
+import org.wing.mocker.http.model.PageDataRo;
 import org.wing.mocker.http.model.PomLocation;
 import org.wing.mocker.http.model.QccrResult;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -30,13 +29,12 @@ public class MainController {
         this.mavenRepositoryService = mavenRepositoryService;
     }
 
-    @RequestMapping("/{groupId}/{artifactId}/{version}/{objectClass}")
+    @RequestMapping("/mock")
     @ResponseBody
-    public Object mock(HttpServletRequest httpServletRequest,
-                       @PathVariable("groupId") String groupId,
-                       @PathVariable("artifactId") String artifactId,
-                       @PathVariable("version") String version,
-                       @PathVariable("objectClass") String objectClass,
+    public Object mock( String groupId,
+                       String artifactId,
+                       String version,
+                       String objectClass,
                        String depth, String listLimit, String struct) {
 
         MockData mockData = new MockData();
@@ -67,7 +65,7 @@ public class MainController {
 
         } catch (MalformedURLException | ClassNotFoundException e) {
             LOGGER.error("mock错误 {}", objectClass, e);
-            return e.getMessage();
+            return e.toString();
         }
     }
 

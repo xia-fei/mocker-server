@@ -1,4 +1,4 @@
-package org.wing.mocker.http;
+package org.wing.mocker.http.model;
 
 import java.util.List;
 

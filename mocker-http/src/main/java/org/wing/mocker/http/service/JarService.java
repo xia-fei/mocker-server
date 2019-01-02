@@ -1,4 +1,4 @@
-package org.wing.mocker.http;
+package org.wing.mocker.http.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

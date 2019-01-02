@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.wing.mocker.core.MockData;
 import org.wing.mocker.http.model.PomLocation;
+import org.wing.mocker.http.service.JarService;
+import org.wing.mocker.http.service.MavenRepositoryService;
 
 import java.io.IOException;
 import java.util.List;
