@@ -42,7 +42,7 @@ public class JarService {
                         classList.add(jarClass);
                     }
                 } catch (ClassNotFoundException|NoClassDefFoundError e) {
-                    LOGGER.info("获取jarEntry Class失败 {}",jarEntryName);
+                    LOGGER.info("获取jarEntry Class失败 {} {}",jarEntryName,e.toString());
                 }
 
             }

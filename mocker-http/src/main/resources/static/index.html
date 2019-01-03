@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ACE in Action</title>
+    <style type="text/css" media="screen">
+        #editor {
+            width: 350px;
+            margin: 100px auto 10px;
+            border: solid 1px #2b85e4;
+        }
+
+        #app {
+            margin: 50px auto;
+        }
+    </style>
+    <!-- import Vue.js -->
+    <script src="vue.min.js"></script>
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="iview.css">
+    <!-- import iView -->
+    <script src="iview.min.js"></script>
+
+</head>
+<body>
+
+<div id="editor">
+    &lt;dependency&gt;
+    &lt;groupId&gt;com.qccr.shprod&lt;/groupId&gt;
+    &lt;artifactId&gt;shprod-facade&lt;/artifactId&gt;
+    &lt;version&gt;3.9.9.9-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+</div>
+<div id="app">
+
+
+    <br>
+    <Row type="flex" justify="center" align="middle" class="code-row-bg">
+        <i-col span="8" style="padding-right:10px">
+            <i-select v-model="className" filterable>
+                <i-option v-for="item in classList" :value="item" :key="item">{{item}}</i-option>
+            </i-select>
+        </i-col>
+        <i-col span="4">
+            <i-button type="success" :loading="loading" @click="loadClass">加载Class对象</i-button>
+        </i-col>
+    </Row>
+    <br>
+    <br>
+
+    <Row type="flex" justify="center" align="middle" class="code-row-bg">
+        <i-col span="6">
+        <radio-group v-model="struct" type="button">
+            <Radio label="普通对象" value="bean"></Radio>
+            <Radio label="数组" value="list"></Radio>
+            <Radio label="分页" value="page"></Radio>
+        </radio-group>
+        </i-col>
+        <i-col>
+            <span>数组大小</span>
+            <input-number  :max="100" :min="1" v-model="listSize"></input-number>
+            <span>递归次数</span>
+            <input-number  :max="10" :min="1" v-model="depth"></input-number>
+        </i-col>
+    </Row>
+
+
+
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
+<script src="axios.min.js"></script>
+
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/eclipse");
+    editor.session.setMode("ace/mode/html");
+    editor.setOption("maxLines", "7");
+    editor.setOption("minLines", "7");
+    editor.setOption("showLineNumbers", false);
+    editor.setOption("showGutter", false);
+
+
+</script>
+<script>
+    let vue = new Vue({
+        el: '#app',
+        data: {
+            loading: false,
+            classListShow: false,
+            classList: {},
+            className: "",
+            listSize:10,
+            depth:3,
+            struct:"bean"
+        },
+        methods: {
+            loadClass: function () {
+
+                let pomXml = editor.getValue();
+                console.log(pomXml);
+                let groupId = this.getElementText(pomXml, 'groupId');
+                let artifactId = this.getElementText(pomXml, 'artifactId');
+                let version = this.getElementText(pomXml, 'version');
+
+                _this = this;
+                this.loading = true;
+                axios.get('/getJarClass', {
+                    params: {
+                        g: groupId, a: artifactId, v: version
+                    }
+                }).then(function (res) {
+                    _this.classList = res.data;
+                    _this.classListShow = true;
+                    _this.loading = false;
+
+                })
+            },
+            getElementText: function (text, tag) {
+                let reg = new RegExp('<' + tag + '>(.*)</' + tag + '>');
+                return reg.exec(text)[1];
+            }
+
+        }
+    })
+</script>
+</body>
+</html>
