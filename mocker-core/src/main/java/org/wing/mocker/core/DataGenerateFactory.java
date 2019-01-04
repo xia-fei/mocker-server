@@ -2,10 +2,7 @@ package org.wing.mocker.core;
 
 
 import org.wing.mocker.annotation.MockValue;
-import org.wing.mocker.core.handler.BooleanGenerateHandler;
-import org.wing.mocker.core.handler.DateGenerateHandler;
-import org.wing.mocker.core.handler.NumberGenerateHandler;
-import org.wing.mocker.core.handler.StringGenerateHandler;
+import org.wing.mocker.core.handler.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ public class DataGenerateFactory {
         classGenerateHandlerList.add(new DateGenerateHandler());
         classGenerateHandlerList.add(new NumberGenerateHandler());
         classGenerateHandlerList.add(new StringGenerateHandler(settings));
+        classGenerateHandlerList.add(new EnumGenerateHandler());
     }
 
     /**

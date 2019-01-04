@@ -2,12 +2,12 @@ package org.wing.mocker.core;
 
 public class MockSettings {
     private String randomStringSource;
-    private  int listLimit;
+    private  int listSize;
     private  int depth;
 
-    public MockSettings(String randomStringSource, int listLimit, int depth) {
+    public MockSettings(String randomStringSource, int listSize, int depth) {
         this.randomStringSource = randomStringSource;
-        this.listLimit = listLimit;
+        this.listSize = listSize;
         this.depth = depth;
     }
 
@@ -19,12 +19,12 @@ public class MockSettings {
         this.randomStringSource = randomStringSource;
     }
 
-    public int getListLimit() {
-        return listLimit;
+    public int getListSize() {
+        return listSize;
     }
 
-    public void setListLimit(int listLimit) {
-        this.listLimit = listLimit;
+    public void setListSize(int listSize) {
+        this.listSize = listSize;
     }
 
     public int getDepth() {

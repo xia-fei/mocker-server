@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class MockData {
@@ -16,7 +13,8 @@ public class MockData {
     private final static Logger LOGGER = LoggerFactory.getLogger(MockData.class);
     private final DataGenerateFactory DATA_GENERATE_FACTORY;
 
-    private   MockSettings mockSettings=new MockSettings("茕茕孑立,沆瀣一气,踽踽独行,醍醐灌顶,绵绵瓜瓞,奉为圭臬,龙行龘龘,犄角旮旯,娉婷袅娜,涕泗滂沱,呶呶不休,不稂不莠",10,3);
+
+    private MockSettings mockSettings = new MockSettings("茕茕孑立,沆瀣一气,踽踽独行,醍醐灌顶,绵绵瓜瓞,奉为圭臬,龙行龘龘,犄角旮旯,娉婷袅娜,涕泗滂沱,呶呶不休,不稂不莠", 10, 3);
 
 
     public MockData() {
@@ -42,6 +40,17 @@ public class MockData {
         }
         if (type instanceof Class) {
             Class typeClass = (Class) type;
+            if (isArrayClass(typeClass)) {
+                Class arrayClass;
+                try {
+                    arrayClass = getArrayClass(typeClass);
+                } catch (ClassNotFoundException e) {
+                    LOGGER.warn("数组对象Class没找到{}", typeClass, e);
+                    return null;
+                }
+                return batchCreate(arrayClass, mockSettings.getListSize(), field, objectPath);
+
+            }
             //如果是基础对象，则生成实例，不是则继续递归
             Object mockValue = DATA_GENERATE_FACTORY.generateValue(typeClass, field);
             if (mockValue != null) {
@@ -53,6 +62,32 @@ public class MockData {
             return createCollectionObject((ParameterizedType) type, field, objectPath);
         }
         throw new IllegalArgumentException("未能转换的类型:" + String.valueOf(type));
+    }
+
+    private Object batchCreate(Class clazz, int size, Field field, ObjectPath objectPath) {
+        Object array = Array.newInstance(clazz, size);
+        for (int i = 0; i < size; i++) {
+            Array.set(array, i, createAllObject(clazz, field, objectPath));
+        }
+        return array;
+    }
+
+    private boolean isArrayClass(Class clazz) {
+        String className = clazz.getName();
+        return className.contains("[L") && className.contains(";");
+    }
+
+
+    private Class getArrayClass(Class clazz) throws ClassNotFoundException {
+        String className = clazz.getName();
+        className = className.substring(2, className.length() - 1);
+        ClassLoader loader;
+        if(clazz.getClassLoader()!=null){
+            loader=clazz.getClassLoader();
+        }else {
+            loader=Thread.currentThread().getContextClassLoader();
+        }
+        return loader.loadClass(className);
     }
 
     private boolean isCollection(Type type) {
@@ -99,7 +134,7 @@ public class MockData {
         if (parameterizedType.getRawType() instanceof Class) {
             Class collectionClass = (Class) parameterizedType.getRawType();
             Collection collection = (Collection) createCollectionInstance(collectionClass);
-            for (int i = 0; i < mockSettings.getListLimit(); i++) {
+            for (int i = 0; i < mockSettings.getListSize(); i++) {
                 collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], field, objectPath));
             }
             return collection;
@@ -136,15 +171,17 @@ public class MockData {
 
                 String propertyName = propertyDescriptor.getName();
                 Field propertyField = getFieldIncludeSuper(clazz, propertyName);
-                if(propertyField==null){
+                if (propertyField == null) {
 //                    LOGGER.warn("字段没找到异常 fieldName:{},class:{}", propertyName, clazz.toString());
                 }
                 //产生新的节点
                 ObjectPath currentPath = new ObjectPath(objectPath, propertyDescriptor.getWriteMethod().getParameterTypes()[0]);
                 Object instanceValue = createAllObject(propertyDescriptor.getReadMethod().getGenericReturnType(), propertyField, currentPath);
                 try {
-                    propertyDescriptor.getWriteMethod().invoke(mappedObject, instanceValue);
-                } catch (RuntimeException | IllegalAccessException | InvocationTargetException e) {
+//                    propertyDescriptor.getWriteMethod().invoke(mappedObject,instanceValue);
+                    propertyField.setAccessible(true);
+                    propertyField.set(mappedObject,instanceValue);
+                } catch (RuntimeException|IllegalAccessException e) {
                     LOGGER.error("字段设置值异常 fieldName:{},class:{}", propertyName, clazz.toString(), e);
                 }
 
@@ -165,6 +202,7 @@ public class MockData {
 
         return null;
     }
+
 
     /**
      * 遍历路径单向链表

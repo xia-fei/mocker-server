@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ACE in Action</title>
+    <title>Maven mock接口</title>
     <style type="text/css" media="screen">
         #editor {
-            width: 350px;
+            width: 370px;
             margin: 100px auto 10px;
             border: solid 1px #2b85e4;
         }
@@ -87,6 +87,7 @@
 
     if (getPomStorage() !== null) {
         editor.setValue(getPomStorage());
+        editor.gotoLine(1);
     }
 
     function getPomStorage() {
@@ -115,8 +116,6 @@
             loadClass: function () {
                 savePomStorage();
                 let pomLocation = this.getPomLocation();
-
-
                 _this = this;
                 this.loading = true;
                 axios.get('/getJarClass', {
@@ -124,8 +123,10 @@
                         g: pomLocation.groupId, a: pomLocation.artifactId, v: pomLocation.version
                     }
                 }).then(function (res) {
-                    _this.classList = res.data;
+                    console.log(res.data.jarUrl);
+                    _this.classList = res.data.classList;
                     _this.loading = false;
+                    _this.$Message.success('加载'+res.data.classList.length+'个对象');
                 }).catch(function (error) {
                     console.log(error);
                     _this.loading = false;
@@ -133,7 +134,6 @@
             },
             getPomLocation: function () {
                 let pomXml = editor.getValue();
-                console.log(pomXml);
                 let groupId = this.getElementText(pomXml, 'groupId');
                 let artifactId = this.getElementText(pomXml, 'artifactId');
                 let version = this.getElementText(pomXml, 'version');

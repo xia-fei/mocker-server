@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -78,7 +80,7 @@ public class MainController {
             mockData.getMockSettings().setDepth(Integer.parseInt(depth));
         }
         if (listSize != null) {
-            mockData.getMockSettings().setListLimit(Integer.parseInt(listSize));
+            mockData.getMockSettings().setListSize(Integer.parseInt(listSize));
         }
         if (environment.getProperty("mock.string") != null) {
             mockData.getMockSettings().setRandomStringSource(environment.getProperty("mock.string"));
@@ -88,7 +90,7 @@ public class MainController {
 
     private List<Object> warpList(MockData mockData, Class mockClass) {
         List<Object> list = new LinkedList<>();
-        for (int i = 0; i < mockData.getMockSettings().getListLimit(); i++) {
+        for (int i = 0; i < mockData.getMockSettings().getListSize(); i++) {
             list.add(mockData.mock(mockClass));
         }
         return list;
@@ -97,7 +99,8 @@ public class MainController {
 
     @GetMapping("/getJarClass")
     @ResponseBody
-    public List<String> getJarClass(String g, String a, String v) throws IOException {
+    public Object getJarClass(String g, String a, String v) throws IOException {
+        Map<String, Object> map = new HashMap<>();
         PomLocation pomLocation = new PomLocation(g, a, v);
         String jarUrl = mavenRepositoryService.getJarClassURL(pomLocation);
         JarService jarService = new JarService(jarUrl);
@@ -106,7 +109,9 @@ public class MainController {
         for (Class className : classList) {
             classNameList.add(className.getName());
         }
-        return classNameList;
+        map.put("jarUrl", jarUrl);
+        map.put("classList", classNameList);
+        return map;
     }
 
 }
