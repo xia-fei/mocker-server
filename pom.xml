@@ -12,6 +12,9 @@
         <module>mocker-annotation</module>
     </modules>
 
+    <properties>
+        <mocker.core.version>2.0</mocker.core.version>
+    </properties>
     <packaging>pom</packaging>
 
     <build>
