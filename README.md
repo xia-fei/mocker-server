@@ -1,7 +1,6 @@
 ## 用户指南
 <a href="/">访问首页</a>
-### 操作界面
-![](https://xiafei-web.oss-cn-hangzhou.aliyuncs.com/file-server/1546587344873.png)
+
 
 
 ### 设计思想
@@ -78,6 +77,9 @@ nexus.server
 ##### 2.启动
 spring-boot 启动`org.wing.mocker.http.MockerHttpApplication#main`
 
+### 操作界面
+
+![](https://xiafei-web.oss-cn-hangzhou.aliyuncs.com/file-server/1546587344873.png)
 
 
 
