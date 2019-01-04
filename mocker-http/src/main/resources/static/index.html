@@ -126,7 +126,7 @@
                     console.log(res.data.jarUrl);
                     _this.classList = res.data.classList;
                     _this.loading = false;
-                    _this.$Message.success('加载'+res.data.classList.length+'个对象');
+                    _this.$Message.success('加载' + res.data.classList.length + '个对象');
                 }).catch(function (error) {
                     console.log(error);
                     _this.loading = false;
@@ -144,6 +144,10 @@
                 return reg.exec(text)[1];
             },
             mockJump: function () {
+                if (this.className === undefined || this.className === '') {
+                    this.$Message.error('请选择一个Class对象');
+                    return;
+                }
                 let url = '/';
                 let pomLocation = this.getPomLocation();
                 url += pomLocation.groupId + "/" + pomLocation.artifactId + "/" + pomLocation.version + "/" + this.className;

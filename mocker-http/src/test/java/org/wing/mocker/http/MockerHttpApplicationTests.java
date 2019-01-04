@@ -22,12 +22,14 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MockerHttpApplicationTests {
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Autowired
     private MavenRepositoryService mavenRepositoryService;
 
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     private String shprodJar="http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
 
