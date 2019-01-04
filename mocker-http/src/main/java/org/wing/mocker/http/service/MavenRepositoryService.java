@@ -30,7 +30,7 @@ public class MavenRepositoryService {
 
 
     private String getReleaseSite(PomLocation pomLocation) {
-        return pomLocation.getGroupId().replace(".", "/") + "/" + pomLocation.getArtifactId() + "/" + pomLocation.getVersion() + ".jar";
+        return "/"+pomLocation.getGroupId().replace(".", "/") + "/" + pomLocation.getArtifactId() + "/" + pomLocation.getVersion()+"/"+pomLocation.getArtifactId()+"-"+pomLocation.getVersion() + ".jar";
     }
 
     private String getSnapshotSite(PomLocation pomLocation) {

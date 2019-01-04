@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static java.lang.Math.abs;
+
 public class NumberGenerateHandler extends AbstractGenerateHandler {
 
 
@@ -41,25 +43,25 @@ public class NumberGenerateHandler extends AbstractGenerateHandler {
 
     @Override
     public Object defaultValue(Class targetClass) {
-        Random random=new Random();
+        Random random = new Random();
         if (equalsWarpTypeOrBasicType(targetClass, Byte.class)) {
             byte[] bytes = new byte[1];
             random.nextBytes(bytes);
-            return bytes[0];
+            return abs(bytes[0]);
         } else if (equalsWarpTypeOrBasicType(targetClass, Short.class)) {
-            return (short)random.nextInt(Short.MAX_VALUE);
+            return (short) abs(random.nextInt(Short.MAX_VALUE));
         } else if (equalsWarpTypeOrBasicType(targetClass, Integer.class)) {
-            return random.nextInt();
+            return abs(random.nextInt());
         } else if (equalsWarpTypeOrBasicType(targetClass, Long.class)) {
-            return random.nextLong();
+            return abs(random.nextLong());
         } else if (equalsWarpTypeOrBasicType(targetClass, Float.class)) {
-            return random.nextFloat();
+            return abs(random.nextFloat());
         } else if (equalsWarpTypeOrBasicType(targetClass, Double.class)) {
-            return random.nextDouble();
+            return abs(random.nextDouble());
         } else if (equalsWarpTypeOrBasicType(targetClass, BigInteger.class)) {
-            return new BigInteger(String.valueOf(random.nextInt()));
+            return new BigInteger(String.valueOf(abs(random.nextInt())));
         } else if (BigDecimal.class == targetClass || Number.class == targetClass) {
-            return new BigDecimal(random.nextDouble());
+            return new BigDecimal(abs(random.nextDouble()));
         } else {
             throw new IllegalArgumentException(
                     "Cannot random to target class [" + targetClass.getName() + "]");
@@ -69,14 +71,6 @@ public class NumberGenerateHandler extends AbstractGenerateHandler {
     @Override
     public Object mockInstance(String str, Class mockClass) {
         return parseNumber(str, mockClass);
-    }
-
-
-    private boolean isDecimals(Class valueClass) {
-        return Double.class.isAssignableFrom(valueClass)
-                || Float.class.isAssignableFrom(valueClass)
-                || float.class.isAssignableFrom(valueClass)
-                || double.class.isAssignableFrom(valueClass);
     }
 
 
