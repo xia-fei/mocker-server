@@ -10,6 +10,7 @@
     <modules>
         <module>mocker-core</module>
         <module>mocker-annotation</module>
+        <module>mocker-http</module>
     </modules>
 
     <packaging>pom</packaging>
