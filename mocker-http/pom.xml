@@ -20,9 +20,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wing</groupId>
+            <groupId>org.wing.mocker</groupId>
             <artifactId>mocker-core</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
