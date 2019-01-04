@@ -29,9 +29,15 @@ public class MockerHttpApplicationTests {
     private MavenRepositoryService mavenRepositoryService;
 
 
+    private String shprodJar = "http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
+    private String goodscenter = "http://192.168.0.107:8081/nexus/content/groups/public/com/qccr/goodscenter/goodscenter-facade/4.1.3.18/goodscenter-facade-4.1.3.18.jar";
 
+    @Test
+    public void testClass2() {
 
-    private String shprodJar="http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
+        remoteMockTest(goodscenter, "com.qccr.goodscenter.facade.ro.item.ItemAreaPriceRO");
+
+    }
 
     @Test
     public void testPomClass() throws ClassNotFoundException, JsonProcessingException, MalformedURLException {
@@ -52,33 +58,31 @@ public class MockerHttpApplicationTests {
     }
 
 
-
     @Test
     public void testShprod() throws IOException, ClassNotFoundException {
         jarAllClassTest(shprodJar);
     }
 
 
-
     public void jarAllClassTest(String jarUrl) throws IOException, ClassNotFoundException {
         System.out.println("start");
         JarService jarService = new JarService(jarUrl);
         List<Class> classes = jarService.getClassList();
-        int success=0;
-        int fail=0;
-        ObjectMapper objectMapper=new ObjectMapper();
+        int success = 0;
+        int fail = 0;
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         for (Class aClass : classes) {
             try {
-                String json=objectMapper.writeValueAsString(new MockData().mock(aClass));
-                System.out.println(aClass + " 成功" +json);
+                String json = objectMapper.writeValueAsString(new MockData().mock(aClass));
+                System.out.println(aClass + " 成功" + json);
                 success++;
             } catch (Throwable e) {
                 System.err.println(aClass + "失败" + e.getMessage());
                 fail++;
             }
         }
-        System.out.println("成功:"+success+"个  失败:"+fail+"个");
+        System.out.println("成功:" + success + "个  失败:" + fail + "个");
     }
 
 
