@@ -172,7 +172,8 @@ public class MockData {
                 String propertyName = propertyDescriptor.getName();
                 Field propertyField = getFieldIncludeSuper(clazz, propertyName);
                 if (propertyField == null) {
-//                    LOGGER.warn("字段没找到异常 fieldName:{},class:{}", propertyName, clazz.toString());
+                    LOGGER.warn("字段没找到,请检查字段命名是否规范  field:{} - class:{}", propertyName, clazz.toString());
+                    continue;
                 }
                 //产生新的节点
                 ObjectPath currentPath = new ObjectPath(objectPath, propertyDescriptor.getWriteMethod().getParameterTypes()[0]);

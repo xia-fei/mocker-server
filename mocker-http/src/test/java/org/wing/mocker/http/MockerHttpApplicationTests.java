@@ -29,6 +29,8 @@ public class MockerHttpApplicationTests {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private String shprodJar="http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
+
     @Test
     public void testPomClass() throws ClassNotFoundException, JsonProcessingException, MalformedURLException {
         PomLocation pomLocation = new PomLocation("org.xiafei", "maven-view", "1.0-SNAPSHOT");
@@ -42,15 +44,23 @@ public class MockerHttpApplicationTests {
         remoteMockTest(jar, "com.nkz.test.ro.StoreRO");
     }
 
-
+    @Test
+    public void testRemoteClassMock2() throws MalformedURLException, ClassNotFoundException, JsonProcessingException {
+        remoteMockTest(shprodJar, "com.qccr.shprod.facade.entity.drawmoney.CanDrawAndRewardRO");
+    }
 
 
 
     @Test
-    public void allTest() throws IOException, ClassNotFoundException {
+    public void testShprod() throws IOException, ClassNotFoundException {
+        jarAllClassTest(shprodJar);
+    }
+
+
+
+    public void jarAllClassTest(String jarUrl) throws IOException, ClassNotFoundException {
         System.out.println("start");
-        String jar="http://192.168.0.107:8081/nexus/content/groups/public/com/ncarzone/businessunitcenter-facade/P6938-SNAPSHOT/businessunitcenter-facade-P6938-20190102.023116-57.jar";
-        JarService jarService = new JarService(jar);
+        JarService jarService = new JarService(jarUrl);
         List<Class> classes = jarService.getClassList();
         int success=0;
         int fail=0;
