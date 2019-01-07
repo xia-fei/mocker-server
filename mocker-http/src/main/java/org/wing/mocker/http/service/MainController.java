@@ -51,7 +51,7 @@ public class MainController {
         PomLocation pomLocation = new PomLocation(groupId, artifactId, version);
         String jarUrl = mavenRepositoryService.getJarClassURL(pomLocation);
         try {
-            URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jarUrl)});
+            URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jarUrl)}, Thread.currentThread().getContextClassLoader());
             Class mockClass = urlClassLoader.loadClass(objectClass);
 
             return QccrResult.create(mockStructData(mockData, mockClass, struct));
@@ -113,7 +113,6 @@ public class MainController {
         map.put("classList", classNameList);
         return map;
     }
-
 
 
 }
