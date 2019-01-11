@@ -25,7 +25,7 @@ public class JarService {
     }
 
     public List<Class> getClassList() throws IOException{
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jarHttpUrl)});
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(jarHttpUrl)},Thread.currentThread().getContextClassLoader());
         URL jarURL = new URL("jar:" + jarHttpUrl + "!/");
         JarURLConnection jarURLConnection = (JarURLConnection) jarURL.openConnection();
         Enumeration<JarEntry> entries = jarURLConnection.getJarFile().entries();
