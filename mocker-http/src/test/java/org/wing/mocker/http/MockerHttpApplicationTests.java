@@ -34,23 +34,24 @@ public class MockerHttpApplicationTests {
 
     @Test
     public void testTotalResult() throws IOException, ClassNotFoundException {
-        remoteMockTest(shprodJar,"com.qccr.shprod.facade.entity.role.TotalResultRo");
+        singleClassTest(shprodJar, "com.qccr.shprod.facade.entity.role.TotalResultRo");
     }
+
     @Test
-    public void ByteError(){
-        remoteMockTest(shprodJar,"com.qccr.shprod.facade.entity.construction.RoyaltyConstructionRO");
+    public void ByteError() {
+        singleClassTest(shprodJar, "com.qccr.shprod.facade.entity.construction.RoyaltyConstructionRO");
     }
 
     @Test
     public void testClass3() {
-        remoteMockTest(goodscenter, "com.qccr.goodscenter.facade.ro.query.category.CategoryGradeQueryOption");
+        singleClassTest(goodscenter, "com.qccr.goodscenter.facade.ro.query.category.CategoryGradeQueryOption");
 
     }
 
     @Test
     public void testClass2() {
 
-        remoteMockTest(goodscenter, "com.qccr.goodscenter.facade.ro.item.ItemAreaPriceRO");
+        singleClassTest(goodscenter, "com.qccr.goodscenter.facade.ro.item.ItemAreaPriceRO");
 
     }
 
@@ -58,33 +59,35 @@ public class MockerHttpApplicationTests {
     public void testPomClass() throws ClassNotFoundException, JsonProcessingException, MalformedURLException {
         PomLocation pomLocation = new PomLocation("org.xiafei", "maven-view", "1.0-SNAPSHOT");
         String jarUrl = mavenRepositoryService.getJarClassURL(pomLocation);
-        remoteMockTest(jarUrl, "com.nkz.test.ro.StoreRO");
+        singleClassTest(jarUrl, "com.nkz.test.ro.StoreRO");
     }
 
-    @Test
-    public void testRemoteClassMock() throws MalformedURLException, ClassNotFoundException, JsonProcessingException {
-        String jar = "http://192.168.0.107:8081/nexus/content/groups/public/org/xiafei/maven-view/1.0-SNAPSHOT/maven-view-1.0-20190104.052538-1.jar";
-        remoteMockTest(jar, "com.nkz.test.ro.StoreRO");
-    }
+
 
     @Test
     public void testRemoteClassMock2() throws MalformedURLException, ClassNotFoundException, JsonProcessingException {
-        remoteMockTest(shprodJar, "com.qccr.shprod.facade.entity.drawmoney.CanDrawAndRewardRO");
+        singleClassTest(shprodJar, "com.qccr.shprod.facade.entity.drawmoney.CanDrawAndRewardRO");
     }
 
 
     @Test
+    public void testMerchantCenter() throws IOException, ClassNotFoundException {
+        PomLocation pomLocation = new PomLocation("com.qccr.merchantcenter", "merchantcenter-facade", "6920-test-SNAPSHOT");
+        allClassTest(mavenRepositoryService.getJarClassURL(pomLocation));
+    }
+
+    @Test
     public void testGoodscenter() throws IOException, ClassNotFoundException {
-        jarAllClassTest(goodscenter);
+        allClassTest(goodscenter);
     }
 
     @Test
     public void testShprod() throws IOException, ClassNotFoundException {
-        jarAllClassTest(shprodJar);
+        allClassTest(shprodJar);
     }
 
 
-    public void jarAllClassTest(String jarUrl) throws IOException, ClassNotFoundException {
+    public void allClassTest(String jarUrl) throws IOException, ClassNotFoundException {
         System.out.println("start");
         JarService jarService = new JarService(jarUrl);
         List<Class> classes = jarService.getClassList();
@@ -98,7 +101,7 @@ public class MockerHttpApplicationTests {
                 System.out.println(aClass + " 成功" + json);
                 success++;
             } catch (Throwable e) {
-                System.err.println(aClass + "失败" + e.getMessage());
+                System.err.println(aClass + "失败" + e.toString());
                 fail++;
             }
         }
@@ -106,7 +109,7 @@ public class MockerHttpApplicationTests {
     }
 
 
-    private void remoteMockTest(String url, String className) {
+    private void singleClassTest(String url, String className) {
         try {
             URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{new URL(url)});
             Class clazz = urlClassLoader.loadClass(className);

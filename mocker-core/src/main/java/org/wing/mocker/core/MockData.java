@@ -52,8 +52,17 @@ public class MockData {
         }
         TypeHelper typeHelper = new TypeHelper(type);
 
-        //基础类型
-        if (type instanceof Class) {
+        //对象数组
+        if (typeHelper.isObjectArray()) {
+            return createObjectArray(type, objectPath);
+            //集合类型
+        } else if (typeHelper.isCollectionArray()) {
+            return createObjectCollection(type, objectPath);
+            //Map类型
+        } else if (typeHelper.isMap()) {
+            return createMapObject(type, objectPath);
+            //基础数据类型
+        } else if (type instanceof Class) {
             Class typeClass = (Class) type;
             //如果是基础对象，则生成实例，不是则继续递归
             Object mockValue = DATA_GENERATE_FACTORY.generateValue(typeClass, field);
@@ -62,17 +71,8 @@ public class MockData {
             } else {
                 return createStandardObject(typeClass, objectPath);
             }
-            //对象数组
-        } else if (typeHelper.isObjectArray()) {
-            return createObjectArray(type, objectPath);
-            //集合类型
-        } else if (typeHelper.isCollectionArray()) {
-            return createObjectCollection(type, objectPath);
-            //Map类型
-        } else if (typeHelper.isMap()) {
-            return createMapObject(type, objectPath);
         }
-        LOGGER.warn("未能转换的类型:{},{}",type, field);
+        LOGGER.warn("未能转换的类型:{},{}", type, field);
         return null;
     }
 
