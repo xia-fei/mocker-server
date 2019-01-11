@@ -32,12 +32,21 @@ public class MockerHttpApplicationTests {
     private String shprodJar = "http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
     private String goodscenter = "http://192.168.0.107:8081/nexus/content/groups/public/com/qccr/goodscenter/goodscenter-facade/4.1.3.18/goodscenter-facade-4.1.3.18.jar";
 
+    @Test
+    public void testTotalResult() throws IOException, ClassNotFoundException {
+        remoteMockTest(shprodJar,"com.qccr.shprod.facade.entity.role.TotalResultRo");
+    }
+    @Test
+    public void ByteError(){
+        remoteMockTest(shprodJar,"com.qccr.shprod.facade.entity.construction.RoyaltyConstructionRO");
+    }
 
     @Test
     public void testClass3() {
         remoteMockTest(goodscenter, "com.qccr.goodscenter.facade.ro.query.category.CategoryGradeQueryOption");
 
     }
+
     @Test
     public void testClass2() {
 
@@ -63,6 +72,11 @@ public class MockerHttpApplicationTests {
         remoteMockTest(shprodJar, "com.qccr.shprod.facade.entity.drawmoney.CanDrawAndRewardRO");
     }
 
+
+    @Test
+    public void testGoodscenter() throws IOException, ClassNotFoundException {
+        jarAllClassTest(goodscenter);
+    }
 
     @Test
     public void testShprod() throws IOException, ClassNotFoundException {

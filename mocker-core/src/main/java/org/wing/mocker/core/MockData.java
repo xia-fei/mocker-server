@@ -19,6 +19,7 @@ public class MockData {
 
     private MockSettings mockSettings = new MockSettings("茕茕孑立,沆瀣一气,踽踽独行,醍醐灌顶,绵绵瓜瓞,奉为圭臬,龙行龘龘,犄角旮旯,娉婷袅娜,涕泗滂沱,呶呶不休,不稂不莠", 10, 3);
 
+    private ClassLoader externalClassLoader;
 
     public MockData() {
         DATA_GENERATE_FACTORY = new DataGenerateFactory(mockSettings);
@@ -32,28 +33,28 @@ public class MockData {
      * mock入口
      */
     public Object mock(Type type) {
+        externalClassLoader = getTypeClassLoader(type);
         ObjectPath root = new ObjectPath(null, (Class) type);
         return createAllObject(type, null, root);
     }
 
+    private ClassLoader getTypeClassLoader(Type type) {
+        if (type instanceof Class) {
+            return ((Class) type).getClassLoader();
+        } else {
+            return Thread.currentThread().getContextClassLoader();
+        }
+    }
 
     private Object createAllObject(Type type, Field field, ObjectPath objectPath) {
         if (isOverDepth(objectPath, type)) {
             return null;
         }
+        TypeHelper typeHelper = new TypeHelper(type);
+
+        //基础类型
         if (type instanceof Class) {
             Class typeClass = (Class) type;
-            if (isArrayClass(typeClass)) {
-                Class arrayClass;
-                try {
-                    arrayClass = getArrayClass(typeClass);
-                } catch (ClassNotFoundException e) {
-                    LOGGER.warn("数组对象Class没找到{}", typeClass, e);
-                    return null;
-                }
-                return batchCreate(arrayClass, mockSettings.getListSize(), field, objectPath);
-
-            }
             //如果是基础对象，则生成实例，不是则继续递归
             Object mockValue = DATA_GENERATE_FACTORY.generateValue(typeClass, field);
             if (mockValue != null) {
@@ -61,42 +62,51 @@ public class MockData {
             } else {
                 return createStandardObject(typeClass, objectPath);
             }
-        } else if (isCollection(type)) {
-            return createCollectionObject((ParameterizedType) type, field, objectPath);
+            //对象数组
+        } else if (typeHelper.isObjectArray()) {
+            return createObjectArray(type, objectPath);
+            //集合类型
+        } else if (typeHelper.isCollectionArray()) {
+            return createObjectCollection(type, objectPath);
+            //Map类型
+        } else if (typeHelper.isMap()) {
+            return createMapObject(type, objectPath);
         }
-        throw new IllegalArgumentException("未能转换的类型:" + String.valueOf(type));
+        LOGGER.warn("未能转换的类型:{},{}",type, field);
+        return null;
     }
 
-    private Object batchCreate(Class clazz, int size, Field field, ObjectPath objectPath) {
+
+    private Object createObjectArray(Type type, ObjectPath objectPath) {
+        try {
+            Class arrayClass = externalClassLoader.loadClass(new TypeHelper(type).getArrayClassName());
+            return createArrayInstance(arrayClass, mockSettings.getListSize(), objectPath);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object createMapObject(Type type, ObjectPath objectPath) {
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        Class keyClass = (Class) parameterizedType.getActualTypeArguments()[0];
+        Class valueClass = (Class) parameterizedType.getActualTypeArguments()[1];
+        Map map = new HashMap();
+        for (int i = 0; i < this.mockSettings.getListSize(); i++) {
+            map.put(createAllObject(keyClass, null, objectPath), createAllObject(valueClass, null, objectPath));
+        }
+        return map;
+    }
+
+    private Object createArrayInstance(Class clazz, int size, ObjectPath objectPath) {
         Object array = Array.newInstance(clazz, size);
         for (int i = 0; i < size; i++) {
-            Array.set(array, i, createAllObject(clazz, field, objectPath));
+            Array.set(array, i, createAllObject(clazz, null, objectPath));
         }
         return array;
     }
 
-    private boolean isArrayClass(Class clazz) {
-        String className = clazz.getName();
-        return className.contains("[L") && className.contains(";");
-    }
-
-
-    private Class getArrayClass(Class clazz) throws ClassNotFoundException {
-        String className = clazz.getName();
-        className = className.substring(2, className.length() - 1);
-        ClassLoader loader;
-        if(clazz.getClassLoader()!=null){
-            loader=clazz.getClassLoader();
-        }else {
-            loader=Thread.currentThread().getContextClassLoader();
-        }
-        return loader.loadClass(className);
-    }
-
-    private boolean isCollection(Type type) {
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        return Collection.class.isAssignableFrom((Class<?>) parameterizedType.getRawType());
-    }
 
     private Class getGenericClass(Type type) {
         if (type instanceof Class) {
@@ -133,30 +143,22 @@ public class MockData {
 
 
     @SuppressWarnings("unchecked")
-    private Object createCollectionObject(ParameterizedType parameterizedType, Field field, ObjectPath objectPath) {
-        if (parameterizedType.getRawType() instanceof Class) {
-            Class collectionClass = (Class) parameterizedType.getRawType();
-            Collection collection = (Collection) createCollectionInstance(collectionClass);
-            for (int i = 0; i < mockSettings.getListSize(); i++) {
-                collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], field, objectPath));
-            }
-            return collection;
+    private Object createObjectCollection(Type type, ObjectPath objectPath) {
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        Collection collection = (Collection) createEmptyCollection((Class) parameterizedType.getRawType());
+        for (int i = 0; i < mockSettings.getListSize(); i++) {
+            collection.add(createAllObject(parameterizedType.getActualTypeArguments()[0], null, objectPath));
         }
-        throw new RuntimeException("类型不支持");
-
-
+        return collection;
     }
 
-    private Object createCollectionInstance(Class collectionClass) {
-        if (collectionClass.isInterface()) {
-            if (List.class.isAssignableFrom(collectionClass)) {
-                return new ArrayList<>();
-            } else if (Set.class.isAssignableFrom(collectionClass)) {
-                return new HashSet<>();
-            }
-            throw new RuntimeException("不支持的集合类型" + collectionClass.toString());
+    private Object createEmptyCollection(Class collectionClass) {
+        if (List.class.isAssignableFrom(collectionClass)) {
+            return new ArrayList<>();
+        } else if (Set.class.isAssignableFrom(collectionClass)) {
+            return new HashSet<>();
         } else {
-            return collectionClass.isInterface();
+            throw new IllegalArgumentException("不支持的集合类" + collectionClass);
         }
 
     }
@@ -171,21 +173,19 @@ public class MockData {
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             if (propertyDescriptor.getWriteMethod() != null && propertyDescriptor.getReadMethod() != null) {
-
                 String propertyName = propertyDescriptor.getName();
                 Field propertyField = getFieldIncludeSuper(clazz, propertyName);
                 if (propertyField == null) {
-                    LOGGER.warn("字段没找到,请检查字段命名是否规范  field:{} - class:{}", propertyName, clazz.toString());
+//                    LOGGER.debug("字段没找到,请检查字段命名是否规范  field:{} - class:{}", propertyName, clazz.toString());
                     continue;
                 }
                 //产生新的节点
                 ObjectPath currentPath = new ObjectPath(objectPath, propertyDescriptor.getWriteMethod().getParameterTypes()[0]);
-                Object instanceValue = createAllObject(propertyDescriptor.getReadMethod().getGenericReturnType(), propertyField, currentPath);
                 try {
-//                    propertyDescriptor.getWriteMethod().invoke(mappedObject,instanceValue);
+                    Object instanceValue = createAllObject(propertyDescriptor.getReadMethod().getGenericReturnType(), propertyField, currentPath);
                     propertyField.setAccessible(true);
-                    propertyField.set(mappedObject,instanceValue);
-                } catch (RuntimeException|IllegalAccessException e) {
+                    propertyField.set(mappedObject, instanceValue);
+                } catch (RuntimeException | IllegalAccessException e) {
                     LOGGER.error("字段设置值异常 fieldName:{},class:{}", propertyName, clazz.toString(), e);
                 }
 

@@ -47,7 +47,7 @@ public class NumberGenerateHandler extends AbstractGenerateHandler {
         if (equalsWarpTypeOrBasicType(targetClass, Byte.class)) {
             byte[] bytes = new byte[1];
             random.nextBytes(bytes);
-            return abs(bytes[0]);
+            return (byte)abs(bytes[0]);
         } else if (equalsWarpTypeOrBasicType(targetClass, Short.class)) {
             return (short) abs(random.nextInt(Short.MAX_VALUE));
         } else if (equalsWarpTypeOrBasicType(targetClass, Integer.class)) {
@@ -73,14 +73,6 @@ public class NumberGenerateHandler extends AbstractGenerateHandler {
         return parseNumber(str, mockClass);
     }
 
-
-    private String getMaxValue(Class numberClass) {
-        try {
-            return numberClass.getDeclaredField("MAX_VALUE").get(null).toString();
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            return "1000";
-        }
-    }
 
 
     private Object parseNumber(String text, Class targetClass) {
