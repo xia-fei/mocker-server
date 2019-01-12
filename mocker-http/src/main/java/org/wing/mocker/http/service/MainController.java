@@ -115,7 +115,7 @@ public class MainController {
         return map;
     }
 
-    @RequestMapping({"/","*.html"})
+//    @RequestMapping({"/","*.html"})
     public ModelAndView vue(HttpServletRequest request) {
         return new ModelAndView(new FixedHtmlView("public/dist/index.html"));
     }
