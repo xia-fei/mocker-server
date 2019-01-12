@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.wing.mocker.core.MockData;
 import org.wing.mocker.http.model.PageDataRo;
 import org.wing.mocker.http.model.PomLocation;
@@ -112,6 +113,11 @@ public class MainController {
         map.put("jarUrl", jarUrl);
         map.put("classList", classNameList);
         return map;
+    }
+
+    @RequestMapping({"/","*.html"})
+    public ModelAndView vue(HttpServletRequest request) {
+        return new ModelAndView(new FixedHtmlView("public/dist/index.html"));
     }
 
 

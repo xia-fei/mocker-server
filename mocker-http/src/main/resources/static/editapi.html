@@ -1,0 +1,108 @@
+<!doctype html>
+
+<head>
+  <title>CodeMirror: Code Folding Demo</title>
+  <meta charset="utf-8"/>
+  <link rel=stylesheet href="CodeMirror/doc/docs.css">
+
+  <style>
+
+  </style>
+
+  <link rel="stylesheet" href="CodeMirror/lib/codemirror.css">
+  <link rel="stylesheet" href="CodeMirror/addon/fold/foldgutter.css"/>
+  <link rel="stylesheet" href="CodeMirror/theme/idea.css">
+  <script src="CodeMirror/lib/codemirror.js"></script>
+  <script src="CodeMirror/addon/fold/foldcode.js"></script>
+  <script src="CodeMirror/addon/fold/foldgutter.js"></script>
+  <script src="CodeMirror/addon/fold/brace-fold.js"></script>
+  <script src="CodeMirror/addon/fold/xml-fold.js"></script>
+  <script src="CodeMirror/addon/fold/indent-fold.js"></script>
+  <script src="CodeMirror/addon/fold/markdown-fold.js"></script>
+  <script src="CodeMirror/addon/fold/comment-fold.js"></script>
+  <script src="CodeMirror/mode/javascript/javascript.js"></script>
+  <script src="CodeMirror/mode/xml/xml.js"></script>
+  <script src="CodeMirror/mode/css/css.js"></script>
+  <script src="CodeMirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="CodeMirror/mode/python/python.js"></script>
+  <script src="CodeMirror/mode/markdown/markdown.js"></script>
+
+  <style>
+    .CodeMirror {
+      border: 1px solid #eee;
+      height: auto;
+    }
+
+    #frame{
+      width: 1000px;
+      margin: 0 auto;
+    }
+    article{
+      width: 800px;
+    }
+  </style>
+</head>
+
+<body>
+<article>
+
+  <br>
+  <br>
+  <a>生成数据</a>
+  <br>
+  <br>
+  <form>
+    <label for="code"></label><textarea id="code" name="code">
+    </textarea>
+
+
+  </form>
+
+</article>
+  <script id="script">
+    /*
+     * Demonstration of code folding
+     */
+
+
+    window.onload = function () {
+      var te = document.getElementById("code");
+
+      te.value = '\n' +
+        '{\n' +
+        '  code: 0,\n' +
+        '  msg: "成功",\n' +
+        '  info: {\n' +
+        '    createPerson: "阿里巴巴",\n' +
+        '    createTime: "2019-01-10 08:33:18",\n' +
+        '    updatePerson: "中国",\n' +
+        '    updateTime: "2019-01-10 08:33:18",\n' +
+        '    dictionaryId: 1406528725,\n' +
+        '    dictKey: "维修保养",\n' +
+        '    dictValue: "新康众",\n' +
+        '    dictDesc: "测试",\n' +
+        '    code: "机油"\n' +
+        '}\n' +
+        '}';
+
+
+      window.editor = CodeMirror.fromTextArea(te, {
+        mode: "application/ld+json",
+        lineNumbers: true,
+        lineWrapping: true,
+        'theme': 'idea',
+        viewportMargin: Infinity,
+        extraKeys: {
+          "Ctrl-Q": function (cm) {
+            cm.foldCode(cm.getCursor());
+          }
+        },
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+      });
+      editor.foldCode(CodeMirror.Pos(13, 0));
+
+
+    };
+  </script>
+</body>
