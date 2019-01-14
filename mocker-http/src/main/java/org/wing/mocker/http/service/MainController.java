@@ -114,7 +114,6 @@ public class MainController {
     @PostMapping("/saveData")
     @ResponseBody
     public Object saveData(@RequestBody String data) {
-        System.out.println(data);
         return Collections.singletonMap("id", apiDataService.save(data));
     }
 
