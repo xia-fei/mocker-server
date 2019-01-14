@@ -13,13 +13,18 @@
   </div>
 </template>
 <script>
-
   import CodeMirror from 'codemirror'
   import 'codemirror/theme/idea.css'
   import 'codemirror/lib/codemirror.css'
-  import 'codemirror/mode/javascript/javascript'
   import 'codemirror/theme/idea.css'
-
+  import 'codemirror/addon/fold/foldgutter.css'
+  import 'codemirror/mode/javascript/javascript'
+  import 'codemirror/addon/fold/foldgutter'
+  import 'codemirror/addon/fold/foldcode'
+  import 'codemirror/addon/fold/indent-fold'
+  import 'codemirror/addon/fold/brace-fold'
+  import 'codemirror/addon/fold/xml-fold'
+  import 'codemirror/mode/htmlmixed/htmlmixed.js'
 
   export default {
     data() {
@@ -54,16 +59,19 @@
     },
     mounted: function () {
       this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        mode: 'javascript',
+        mode: 'application/ld+json',
         lineNumbers: true,
-        'theme': 'idea'
+        lineWrapping: true,
+        'theme': 'idea',
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
       });
       let reqParameter = decodeURIComponent(this.getParam('apiParameter'));
       console.log(this.$API_URL + reqParameter);
       this.$axios.get(this.$API_URL + reqParameter).then((res) => {
         this.editor.setValue(JSON.stringify(res.data, null, 2));
+        this.editor.foldCode(CodeMirror.Pos(13, 0));
       }).catch((error) => {
-
       })
     }
 

@@ -115,10 +115,7 @@
         return reg.exec(text)[1];
       },
       getApiParam: function () {
-        if (this.className === undefined || this.className === '') {
-          this.$Message.error('请选择一个Class对象');
-          return;
-        }
+
         let url = '/';
         let pomLocation = this.getPomLocation();
         url += pomLocation.groupId + "/" + pomLocation.artifactId + "/" + pomLocation.version + "/" + this.className;
@@ -139,9 +136,17 @@
         return url;
       },
       mockJump: function () {
+        if (this.className === undefined || this.className === '') {
+          this.$Message.error('请选择一个Class对象');
+          return;
+        }
         window.open(this.$API_URL + this.getApiParam());
       },
       customize: function () {
+        if (this.className === undefined || this.className === '') {
+          this.$Message.error('请选择一个Class对象');
+          return;
+        }
         window.open('edit-api.html?apiParameter=' + encodeURIComponent(this.getApiParam()));
       },
       appParam: function (queryString, k, v) {
