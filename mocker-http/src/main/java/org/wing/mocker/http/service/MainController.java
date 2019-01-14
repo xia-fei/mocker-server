@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.wing.mocker.core.MockData;
 import org.wing.mocker.http.model.PageDataRo;
@@ -20,10 +17,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -32,11 +26,13 @@ public class MainController {
     private final Environment environment;
     private Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private final MavenRepositoryService mavenRepositoryService;
+    private final ApiDataService apiDataService;
 
     @Autowired
-    public MainController(MavenRepositoryService mavenRepositoryService, Environment environment) {
+    public MainController(MavenRepositoryService mavenRepositoryService, Environment environment, ApiDataService apiDataService) {
         this.mavenRepositoryService = mavenRepositoryService;
         this.environment = environment;
+        this.apiDataService = apiDataService;
     }
 
     @RequestMapping("/{groupId}/{artifactId}/{version}/{objectClass:.+}")
@@ -115,7 +111,20 @@ public class MainController {
         return map;
     }
 
-//    @RequestMapping({"/","*.html"})
+    @PostMapping("/saveData")
+    @ResponseBody
+    public Object saveData(@RequestBody String data) {
+        System.out.println(data);
+        return Collections.singletonMap("id", apiDataService.save(data));
+    }
+
+    @GetMapping("/data/{id}")
+    @ResponseBody
+    public String getData(@PathVariable("id") Long id) {
+        return apiDataService.get(id);
+    }
+
+        @RequestMapping({"/","*.html"})
     public ModelAndView vue(HttpServletRequest request) {
         return new ModelAndView(new FixedHtmlView("public/dist/index.html"));
     }

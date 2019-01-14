@@ -29,21 +29,24 @@
       <br>
       <br>
       <Row>
-        <i-col span="7">
+        <i-col span="6">
           <radio-group v-model="struct" type="button">
             <Radio label="bean">普通对象</Radio>
             <Radio label="list">数组</Radio>
             <Radio label="page">分页</Radio>
           </radio-group>
         </i-col>
-        <i-col span="11">
+        <i-col span="9">
           <span>数组大小</span>
           <input-number :max="100" :min="1" v-model="listSize"></input-number>
           <span>递归次数</span>
           <input-number :max="10" :min="1" v-model="depth"></input-number>
         </i-col>
-        <i-col span="6">
-          <i-button type="primary" @click="mockJump">开始mock接口</i-button>
+        <i-col span="3" offset="1">
+          <i-button type="primary" @click="customize">自定义数据</i-button>
+        </i-col>
+        <i-col span="3">
+          <i-button type="primary" @click="mockJump">Mock数据</i-button>
         </i-col>
 
       </Row>
@@ -67,6 +70,7 @@
   import 'codemirror/mode/xml/xml'
 
 
+
   export default {
     data() {
       return {
@@ -80,6 +84,7 @@
       }
     },
     methods: {
+
       loadClass: function () {
         this.savePomStorage(this.editor.getValue());
         let pomLocation = this.getPomLocation();
@@ -109,7 +114,7 @@
         let reg = new RegExp('<' + tag + '>(.*)</' + tag + '>');
         return reg.exec(text)[1];
       },
-      mockJump: function () {
+      getApiParam: function () {
         if (this.className === undefined || this.className === '') {
           this.$Message.error('请选择一个Class对象');
           return;
@@ -131,7 +136,13 @@
         if (queryString !== '') {
           url += '?' + queryString;
         }
-        window.open(this.$API_URL+url);
+        return url;
+      },
+      mockJump: function () {
+        window.open(this.$API_URL + this.getApiParam());
+      },
+      customize: function () {
+        window.open('edit-api.html?apiParameter=' + encodeURIComponent(this.getApiParam()));
       },
       appParam: function (queryString, k, v) {
         let and = '';
@@ -163,7 +174,7 @@
         "         <groupId>com.qccr.goodscenter</groupId>\n" +
         "         <artifactId>goodscenter-facade</artifactId>\n" +
         "         <version>4.1.3.18</version>\n" +
-        "    </dependency>");
+        "</dependency>");
 
       let pomStorage = this.getPomStorage();
       if (pomStorage !== null) {

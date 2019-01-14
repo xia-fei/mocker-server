@@ -5,16 +5,17 @@ import App from './App'
 import router from './router'
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
+import axios from 'axios'
 
 Vue.config.productionTip = false
 Vue.use(iView);
-/* eslint-disable no-new */
+
 let API_URL = '';
 if (process.env.NODE_ENV === 'development') {
   API_URL = 'http://localhost:8090'
 }
-
 Vue.prototype.$API_URL = API_URL;
+Vue.prototype.$axios=axios;
 new Vue({
   el: '#app',
   router,
