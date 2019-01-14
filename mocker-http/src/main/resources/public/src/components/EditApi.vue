@@ -36,7 +36,7 @@
         let value = this.editor.getValue();
         this.$axios.post(this.$API_URL + '/saveData',JSON.parse(value)
         ).then((res) => {
-          window.open(this.$API_URL + '/data/' + res.data.id);
+          window.location.href=this.$API_URL + '/data/' + res.data.id;
         })
       },
       getParam: function (key) {
