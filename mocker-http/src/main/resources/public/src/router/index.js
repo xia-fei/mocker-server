@@ -2,10 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import EditApi from '@/components/EditApi'
+
 Vue.use(Router);
 
 export default new Router({
-  mode:'history',
+  mode: 'history',
   routes: [
     {
       path: '/',
