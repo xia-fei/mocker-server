@@ -142,9 +142,7 @@ public class MainController implements DisposableBean, InitializingBean {
     }
 
 
-    /**
-     * TODO 处理文件夹创建，处理加载失败异常
-     */
+
     @Override
     public void destroy() throws Exception {
         try {
