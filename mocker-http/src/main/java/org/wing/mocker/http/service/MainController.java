@@ -2,9 +2,13 @@ package org.wing.mocker.http.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.SerializationUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.wing.mocker.core.MockData;
@@ -17,16 +21,20 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
 @Controller
-public class MainController {
+public class MainController implements DisposableBean, InitializingBean {
 
     private final Environment environment;
     private Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private final MavenRepositoryService mavenRepositoryService;
-    private final ApiDataService apiDataService;
+    private ApiDataService apiDataService;
+    private final String filePath = "/data/file";
 
     @Autowired
     public MainController(MavenRepositoryService mavenRepositoryService, Environment environment, ApiDataService apiDataService) {
@@ -123,13 +131,46 @@ public class MainController {
         return apiDataService.get(id);
     }
 
-    @RequestMapping({"/","*.html"})
+    @RequestMapping({"/", "*.html"})
     public ModelAndView vue(HttpServletRequest request) {
         return new ModelAndView(new FixedHtmlView("public/dist/index.html"));
     }
+
     @RequestMapping("/quick-start.html")
     public ModelAndView quickStart() {
         return new ModelAndView(new FixedHtmlView("static/quick-start.html"));
+    }
+
+
+    /**
+     * TODO 处理文件夹创建，处理加载失败异常
+     */
+    @Override
+    public void destroy() throws Exception {
+        try {
+            Path path = Paths.get(filePath);
+            Files.createDirectories(path);
+            byte[] data = SerializationUtils.serialize(apiDataService);
+            StreamUtils.copy(data, Files.newOutputStream(path.resolve("1.db")));
+            LOGGER.info("序列化文件保存成功");
+        } catch (Exception e) {
+            LOGGER.error("序列化文件保存失败", e);
+        }
+
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            Path path = Paths.get(filePath).resolve("1.db");
+            if (Files.exists(path)) {
+                apiDataService = (ApiDataService) SerializationUtils.deserialize(StreamUtils.copyToByteArray(Files.newInputStream(path)));
+                LOGGER.info("序列化文件读取成功");
+            }
+        } catch (Exception e) {
+            LOGGER.error("序列化文件读取失败");
+        }
+
     }
 
 
