@@ -147,7 +147,7 @@
           this.$Message.error('请选择一个Class对象');
           return;
         }
-        window.open('edit-api.html?apiParameter=' + encodeURIComponent(this.getApiParam()));
+        window.open('edit-api?apiParameter=' + encodeURIComponent(this.getApiParam()));
       },
       appParam: function (queryString, k, v) {
         let and = '';

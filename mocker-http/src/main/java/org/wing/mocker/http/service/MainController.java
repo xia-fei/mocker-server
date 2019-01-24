@@ -131,7 +131,7 @@ public class MainController implements DisposableBean, InitializingBean {
         return apiDataService.get(id);
     }
 
-    @RequestMapping({"/", "*.html"})
+//    @RequestMapping({"/", "*.html"})
     public ModelAndView vue(HttpServletRequest request) {
         return new ModelAndView(new FixedHtmlView("public/dist/index.html"));
     }

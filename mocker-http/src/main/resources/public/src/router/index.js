@@ -13,7 +13,7 @@ export default new Router({
       component: Index
     },
     {
-      path: '/edit-api.html',
+      path: '/edit-api',
       component: EditApi
     }
   ]
