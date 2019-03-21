@@ -10,6 +10,8 @@ import java.util.Map;
 public class TypeHelperTest {
 
 
+
+
     @Test
     public void testArray() {
         Assert.assertTrue(new TypeHelper(Object[].class).isObjectArray());

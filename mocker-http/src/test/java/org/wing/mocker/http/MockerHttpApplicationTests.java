@@ -32,6 +32,8 @@ public class MockerHttpApplicationTests {
     private String shprodJar = "http://192.168.0.107:8081/nexus/service/local/repositories/snapshots/content/com/qccr/shprod/shprod-facade/3.9.9.9-SNAPSHOT/shprod-facade-3.9.9.9-20181215.195710-450.jar";
     private String goodscenter = "http://192.168.0.107:8081/nexus/content/groups/public/com/qccr/goodscenter/goodscenter-facade/4.1.3.18/goodscenter-facade-4.1.3.18.jar";
 
+
+
     @Test
     public void testTotalResult() throws IOException, ClassNotFoundException {
         singleClassTest(shprodJar, "com.qccr.shprod.facade.entity.role.TotalResultRo");
