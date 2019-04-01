@@ -5,24 +5,12 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.wing.mocker</groupId>
-        <version>1.0</version>
+        <version>3.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>annotation</artifactId>
-    <version>1.0</version>
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>Nexus Release Repository</name>
-            <url>http://192.168.0.107:8081/nexus/content/repositories/releases/</url>
-        </repository>
+    <version>3.0</version>
 
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>Nexus Snapshots Repository</name>
-            <url>http://192.168.0.107:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>
